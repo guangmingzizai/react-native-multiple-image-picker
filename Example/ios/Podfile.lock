@@ -1,0 +1,68 @@
+PODS:
+  - BLPhotoAssetPickerController (0.1.0):
+    - Masonry
+    - MBProgressHUD
+    - MWPhotoBrowser@guangmingzizai (~> 2.2.0)
+  - DACircularProgress (2.3.1)
+  - Masonry (1.0.2)
+  - MBProgressHUD (0.9.2)
+  - MWPhotoBrowser@guangmingzizai (2.2.0):
+    - DACircularProgress (~> 2.3)
+    - MBProgressHUD (~> 0.9)
+    - pop (~> 1.0)
+    - SDWebImage (!= 3.7.2, ~> 3.7)
+  - pop (1.0.9)
+  - React/ART (0.36.1):
+    - React/Core
+  - React/Core (0.36.1)
+  - React/RCTActionSheet (0.36.1):
+    - React/Core
+  - React/RCTAnimation (0.36.1):
+    - React/Core
+  - React/RCTGeolocation (0.36.1):
+    - React/Core
+  - React/RCTImage (0.36.1):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTLinkingIOS (0.36.1):
+    - React/Core
+  - React/RCTNetwork (0.36.1):
+    - React/Core
+  - React/RCTText (0.36.1):
+    - React/Core
+  - React/RCTWebSocket (0.36.1):
+    - React/Core
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
+
+DEPENDENCIES:
+  - BLPhotoAssetPickerController
+  - React/ART (from `../node_modules/react-native`)
+  - React/Core (from `../node_modules/react-native`)
+  - React/RCTActionSheet (from `../node_modules/react-native`)
+  - React/RCTAnimation (from `../node_modules/react-native`)
+  - React/RCTGeolocation (from `../node_modules/react-native`)
+  - React/RCTImage (from `../node_modules/react-native`)
+  - React/RCTLinkingIOS (from `../node_modules/react-native`)
+  - React/RCTNetwork (from `../node_modules/react-native`)
+  - React/RCTText (from `../node_modules/react-native`)
+  - React/RCTWebSocket (from `../node_modules/react-native`)
+
+EXTERNAL SOURCES:
+  React:
+    :path: ../node_modules/react-native
+
+SPEC CHECKSUMS:
+  BLPhotoAssetPickerController: f5f998a8b74ab94f46bb251c3e2eb31502bef9c4
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  Masonry: 7c429b56da9d4ee0bbb3ed77a5ea710d6a5df39e
+  MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+  MWPhotoBrowser@guangmingzizai: 81445ed0ec5bfd162881247610670742d37def92
+  pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
+  React: d75161dea5db43c144b3753f628118b083ba049b
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+
+PODFILE CHECKSUM: 40bdec28d58a4a2ba821c75835116c80e6df77eb
+
+COCOAPODS: 1.1.0.rc.2
