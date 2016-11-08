@@ -1,0 +1,31 @@
+{
+  "name": "react-native-multiple-image-picker",
+  "description": "A React Native module that allows you to select multiple images from photo assets.",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guangmingzizai/react-native-multiple-image-picker.git"
+  },
+  "nativePackage": true,
+  "author": "wangjianfei xuran",
+  "contributors": [
+    {
+      "name": "duwan"
+    },
+    {
+      "name": "wuyujing"
+    }
+  ],
+  "keywords": [
+    "react-native",
+    "react-native-multiple-image-picker",
+    "react",
+    "native",
+    "image",
+    "picker"
+  ],
+  "scripts": {
+    "prepublish": "rm -rf android/build Example/android/build Example/android/app/build"
+  }
+}
