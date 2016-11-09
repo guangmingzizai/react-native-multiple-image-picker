@@ -52,7 +52,6 @@ PODS:
   - UIAlertView+Blocks (0.9)
 
 DEPENDENCIES:
-  - BLPhotoAssetPickerController (from `~/projects/BLPhotoAssetPickerController/`)
   - react-native-multiple-image-picker (from `../../`)
   - React/ART (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
@@ -66,8 +65,6 @@ DEPENDENCIES:
   - React/RCTWebSocket (from `../node_modules/react-native`)
 
 EXTERNAL SOURCES:
-  BLPhotoAssetPickerController:
-    :path: ~/projects/BLPhotoAssetPickerController/
   React:
     :path: ../node_modules/react-native
   react-native-multiple-image-picker:
@@ -81,13 +78,13 @@ SPEC CHECKSUMS:
   MWPhotoBrowser@guangmingzizai: 81445ed0ec5bfd162881247610670742d37def92
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   React: d75161dea5db43c144b3753f628118b083ba049b
-  react-native-multiple-image-picker: 4ad506c40f59f7ea37c8765bf35f4f72b2a1222b
+  react-native-multiple-image-picker: 2533023c81058ef3aacbe2880e0c049474e21414
   RMUniversalAlert: ce7118101a19fa41b9adedf907b66a8cc3bd32c8
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   UIActionSheet+Blocks: e180b7dad0a721ab7f212ac9742af799008bb358
   UIAlertController+Blocks: 80e28b92523fb58aba4d1bccec013d5a0b0bddb2
   UIAlertView+Blocks: a46c99c5144f6c5dbc7d62fd2a0678daceec89a3
 
-PODFILE CHECKSUM: 5a959fa9a39183b7319ef24a2139ef4b16041b62
+PODFILE CHECKSUM: c2eb56d81b509507c810a39c0d39105d9aa0f938
 
 COCOAPODS: 1.1.0.rc.2

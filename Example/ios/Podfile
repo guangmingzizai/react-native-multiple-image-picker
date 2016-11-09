@@ -20,7 +20,7 @@ target 'Example' do
     # Add any other subspecs you want to use in your project
   ]
   pod 'react-native-multiple-image-picker', :path => '../../'
-  pod 'BLPhotoAssetPickerController', :path => '~/projects/BLPhotoAssetPickerController/'
+  # pod 'BLPhotoAssetPickerController', :path => '~/projects/BLPhotoAssetPickerController/'
 
   target 'ExampleTests' do
     inherit! :search_paths
