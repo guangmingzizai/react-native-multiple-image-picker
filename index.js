@@ -5,7 +5,7 @@
 * @Email:  guangmingzizai@qq.com
 * @Project: NumOneMatchmaker
 * @Last modified by:   wangjianfei
-* @Last modified time: 2016-11-09T15:31:14+08:00
+* @Last modified time: 2016-11-09T18:55:21+08:00
 *
 * @flow
 */
@@ -35,7 +35,7 @@ export type MultipleImagePickerOptions = {
   maxHeight?: number;
   imageFileType?: 'png'|'jpg'; //default jpg
   quality?: number; //jpg compress quality
-  noData?: boolean; //whether callback should contains image data object
+  noData?: boolean; //whether callback should contains image data object, default false
   storageOptions?: {
     cameraRoll?: boolean; //whether save image to cameraRoll
     waitUntilSaved?: boolean; //whether callback after saving to cameraRoll
@@ -49,9 +49,9 @@ export type MultipleImagePikcerResultItem = {
   uri: string; //temp cached file path
   origURL?: string; //image original url
   fileSize?: number; //image data size
+  width: number;
+  height: number;
 };
-
-export type MultipleImagePickerCallback = [error: MultipleImagePickerError, images?: Array<MultipleImagePikcerResultItem>] => mixed;
 
 const DEFAULT_OPTIONS: MultipleImagePickerOptions = {
   title: '',
@@ -62,25 +62,27 @@ const DEFAULT_OPTIONS: MultipleImagePickerOptions = {
   allowsEditing: false,
   maxWidth: 800,
   maxHeight: 1280,
+  noData: true,
+  maxSelectionNum: 4,
 };
 
 module.exports = {
   ...MultipleImagePickerManager,
-  launchCamera: function (options: MultipleImagePickerOptions, callback: MultipleImagePickerCallback) {
+  launchCamera: function (options: MultipleImagePickerOptions, callback) {
     if (typeof options === 'function') {
       callback = options;
       options = {};
     }
     return MultipleImagePickerManager.launchCamera({...DEFAULT_OPTIONS, ...options}, callback);
   },
-  launchMultipleImagePicker: function (options: MultipleImagePickerOptions, callback: MultipleImagePickerCallback) {
+  launchMultipleImagePicker: function (options: MultipleImagePickerOptions, callback) {
     if (typeof options === 'function') {
       callback = options;
       options = {};
     }
     return MultipleImagePickerManager.launchMultipleImagePicker({...DEFAULT_OPTIONS, ...options}, callback);
   },
-  showImagePicker: function (options: MultipleImagePickerOptions, callback: MultipleImagePickerCallback) {
+  showImagePicker: function (options: MultipleImagePickerOptions, callback) {
     if (typeof options === 'function') {
       callback = options;
       options = {};

@@ -81,7 +81,7 @@ SPEC CHECKSUMS:
   MWPhotoBrowser@guangmingzizai: 81445ed0ec5bfd162881247610670742d37def92
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   React: d75161dea5db43c144b3753f628118b083ba049b
-  react-native-multiple-image-picker: ba0c7d0b1b8e57192a8b109c457e932d430bf52c
+  react-native-multiple-image-picker: 4ad506c40f59f7ea37c8765bf35f4f72b2a1222b
   RMUniversalAlert: ce7118101a19fa41b9adedf907b66a8cc3bd32c8
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   UIActionSheet+Blocks: e180b7dad0a721ab7f212ac9742af799008bb358

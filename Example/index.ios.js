@@ -9,19 +9,33 @@ import {
   PixelRatio,
   TouchableOpacity,
   Image,
-  Platform
+  Platform,
+  ScrollView,
+  Dimensions,
 } from 'react-native';
 
 import MultipleImagePicker from 'react-native-multiple-image-picker';
 import type {
   MultipleImagePikcerResultItem,
   MultipleImagePickerError,
-  MultipleImagePickerCallback,
 } from 'react-native-multiple-image-picker';
 
+type Photo = {
+  id?: string;
+  width: number;
+  height: number;
+  url: string;
+  isStatic: boolean;
+  timestamp?: number;
+};
+
 export default class Example extends Component {
+  state: {
+    images: [MultipleImagePikcerResultItem],
+  };
+
   state = {
-    avatarSource: null,
+    images: [],
   };
 
   selectPhotoTapped() {
@@ -44,36 +58,47 @@ export default class Example extends Component {
         console.log(error);
       }
       else {
-        var response = imageInfos[0];
-        var source;
-
-        // You can display the image using either:
-        //source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
-
-        //Or:
-        if (Platform.OS === 'android') {
-          source = {uri: response.uri, isStatic: true};
-        } else {
-          source = {uri: response.uri.replace('file://', ''), isStatic: true};
-        }
-
-        this.setState({
-          avatarSource: source
+        var images = imageInfos.map((imageInfo: MultipleImagePikcerResultItem) => {
+          return {
+            width: imageInfo.width,
+            height: imageInfo.height,
+            url: (Platform.OS === 'android' ? imageInfo.uri : imageInfo.uri.replace('file://', '')),
+            isStatic: true,
+          };
         });
+        this.setState({images});
       }
     });
   }
 
   render() {
+    let screenWidth = Dimensions.get('window').width;
+    let photoWidth = (screenWidth - 2 * 15 - 2 * 15) / 3;
+    let images = this.state.images;
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
-          <View style={[styles.avatar, styles.avatarContainer, {marginBottom: 20}]}>
-          { this.state.avatarSource === null ? <Text>Select a Photo</Text> :
-            <Image style={styles.avatar} source={this.state.avatarSource} />
-          }
-          </View>
-        </TouchableOpacity>
+        <View style={{alignSelf: 'stretch', backgroundColor: 'pink', height: photoWidth}}>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          >
+            {
+              this.state.images.map((photo: Photo) => {
+                return (
+                  <Image
+                    style={{width: photoWidth, height: photoWidth, marginLeft: 15}}
+                    source={{uri: photo.url, isStatic: photo.isStatic}}
+                  />
+                )
+              })
+            }
+            <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
+              <View style={[{width: photoWidth, height: photoWidth, marginLeft: 15, marginRight: 15}, styles.avatarContainer, {marginLeft: 15}]}>
+                <Text>Select a Photo</Text>
+              </View>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
       </View>
     );
   }
@@ -92,11 +117,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  avatar: {
-    borderRadius: 75,
-    width: 150,
-    height: 150
-  }
 });
 
 AppRegistry.registerComponent('Example', () => Example);
