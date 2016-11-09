@@ -6,9 +6,10 @@ Pod::Spec.new do |s|
   s.authors      = { 'Wang JianFei' => 'guangmingzizai@qq.com' }
   s.summary      = "A React Native module that allows you to select multiple images from photo assets."
   s.source       = { :git => "https://github.com/guangmingzizai/react-native-multiple-image-picker" }
-  s.source_files  = "ios/*.{h,m}"
+  s.source_files  = "ios/RNMultipleImagePicker/*.{h,m}"
 
   s.platform     = :ios, "8.0"
   s.dependency 'React'
   s.dependency 'BLPhotoAssetPickerController'
+  s.dependency 'RMUniversalAlert'
 end

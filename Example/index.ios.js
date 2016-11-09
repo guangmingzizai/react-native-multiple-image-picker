@@ -13,6 +13,11 @@ import {
 } from 'react-native';
 
 import MultipleImagePicker from 'react-native-multiple-image-picker';
+import type {
+  MultipleImagePikcerResultItem,
+  MultipleImagePickerError,
+  MultipleImagePickerCallback,
+} from 'react-native-multiple-image-picker';
 
 export default class Example extends Component {
   state = {
@@ -26,22 +31,20 @@ export default class Example extends Component {
       maxHeight: 500,
       storageOptions: {
         skipBackup: true
-      }
+      },
+      cancelButtonTitle: '取消',
+      takePhotoButtonTitle: '拍照',
+      chooseFromLibraryButtonTitle: '从相册选取',
     };
 
-    MultipleImagePicker.launchCamera(options, (response) => {
-      console.log('Response = ', response);
-
-      if (response.didCancel) {
-        console.log('User cancelled photo picker');
-      }
-      else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      }
-      else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
+    MultipleImagePicker.showImagePicker(options, (error: MultipleImagePickerError, imageInfos: Array<MultipleImagePikcerResultItem>]) => {
+      console.log(`error:${error}, imageInfos:${imageInfos}`);
+      
+      if (error) {
+        console.log(error);
       }
       else {
+        var response = imageInfos[0];
         var source;
 
         // You can display the image using either:

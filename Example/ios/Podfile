@@ -19,7 +19,7 @@ target 'Example' do
     'RCTWebSocket', # needed for debugging
     # Add any other subspecs you want to use in your project
   ]
-  pod 'BLPhotoAssetPickerController'
+  pod 'react-native-multiple-image-picker', :path => '../../'
 
   target 'ExampleTests' do
     inherit! :search_paths
