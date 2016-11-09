@@ -37,9 +37,9 @@ export default class Example extends Component {
       chooseFromLibraryButtonTitle: '从相册选取',
     };
 
-    MultipleImagePicker.showImagePicker(options, (error: MultipleImagePickerError, imageInfos: Array<MultipleImagePikcerResultItem>]) => {
+    MultipleImagePicker.showImagePicker(options, (error: MultipleImagePickerError, imageInfos: Array<MultipleImagePikcerResultItem>) => {
       console.log(`error:${error}, imageInfos:${imageInfos}`);
-      
+
       if (error) {
         console.log(error);
       }

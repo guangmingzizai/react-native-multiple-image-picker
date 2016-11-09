@@ -13,7 +13,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <Photos/Photos.h>
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <BLPhotoAssetPickerController/BLPhotoAssetViewController.h>
 #import <BLPhotoAssetPickerController/BLPhotoAssetPickerController.h>
 #import <BLPhotoAssetPickerController/BLPhotoUtils.h>
 #import <BLPhotoAssetPickerController/MBProgressHUD+Add.h>
@@ -93,17 +92,18 @@ RCT_EXPORT_METHOD(launchMultipleImagePicker:(NSDictionary *)options callback:(RC
             return;
         }
         
-        BLPhotoAssetViewController *assetViewController = [[BLPhotoAssetViewController alloc] init];
-        assetViewController.maxSelectionNum = (self.options[@"maxSelectionNum"] ? [self.options[@"maxSelectionNum"] integerValue] : 9);
-        assetViewController.cameraEnable = NO;
-        BLPhotoAssetPickerController *pickerController = [[BLPhotoAssetPickerController alloc] initWithRootViewController:assetViewController];
-        pickerController.assetDelegate = self;
+        BLPhotoAssetPickerController *assetPickerViewController = [[BLPhotoAssetPickerController alloc] init];
+        assetPickerViewController.maxSelectionNum = (self.options[@"maxSelectionNum"] ? [self.options[@"maxSelectionNum"] integerValue] : 9);
+        assetPickerViewController.cameraEnable = NO;
+        assetPickerViewController.delegate = self;
+        
+        BLPhotoAssetNavigationController *pickerNavigationController = [[BLPhotoAssetNavigationController alloc] initWithRootViewController:assetPickerViewController];
         [BLPhotoUtils setUseCount:0];
         [BLPhotoUtils setWillUseCount:0];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             UIViewController *root = [UIViewController gm_toppestPresentedViewController];
-            [root presentViewController:pickerController animated:YES completion:nil];
+            [root presentViewController:pickerNavigationController animated:YES completion:nil];
         });
     }];
 }
@@ -177,7 +177,7 @@ RCT_EXPORT_METHOD(showImagePicker:(NSDictionary *)options callback:(RCTResponseS
                 }
             }];
         } else {
-            [self _responseForImage:image imageURL:imageURL cachePath:path completionBlock:^(NSError *error, NSDictionary *response) {
+            [self _responseForImage:image needDownscale:YES imageURL:imageURL cachePath:path completionBlock:^(NSError *error, NSDictionary *response) {
                 if (error) {
                     self.callback(@[RCTMakeError(@"ACCESS_IMAGE_FAILED", nil, nil)]);
                 } else {
@@ -207,6 +207,11 @@ RCT_EXPORT_METHOD(showImagePicker:(NSDictionary *)options callback:(RCTResponseS
         // when the image has been saved in the photo album
         self.callback(@[[NSNull null], @[(__bridge NSDictionary *)ctxInfo]]);
     }
+}
+
+- (NSString *)_defaultCachePathForAsset:(PHAsset *)asset {
+    NSString *fileName = [[[NSUUID UUID] UUIDString] stringByAppendingString:@".jpg"];
+    return [[NSTemporaryDirectory() stringByStandardizingPath] stringByAppendingPathComponent:fileName];
 }
 
 - (NSString *)_defaultCachePathForImageURL:(NSURL *)imageURL mediaType:(NSString *)mediaType {
@@ -284,7 +289,7 @@ RCT_EXPORT_METHOD(showImagePicker:(NSDictionary *)options callback:(RCTResponseS
     }];
 }
 
-- (void)_responseForImage:(UIImage *)image imageURL:(NSURL *)imageURL cachePath:(NSString *)cachePath completionBlock:(void (^)(NSError *error, NSDictionary *response))completionBlock {
+- (void)_responseForImage:(UIImage *)image needDownscale:(BOOL)needDownscale imageURL:(NSURL *)imageURL cachePath:(NSString *)cachePath completionBlock:(void (^)(NSError *error, NSDictionary *response))completionBlock {
     NSMutableDictionary *response = [NSMutableDictionary dictionary];
     
     // GIFs break when resized, so we handle them differently
@@ -365,15 +370,26 @@ RCT_EXPORT_METHOD(showImagePicker:(NSDictionary *)options callback:(RCTResponseS
 
 #pragma mark - BLPhotoAssetPickerControllerDelegate
 
-- (void)assetPickerController:(BLPhotoAssetPickerController *)picker didFinishPickingAssets:(NSArray *)assets {
+- (void)photoAssetPickerController:(BLPhotoAssetPickerController *)picker didFinishPickingAssets:(NSArray<PHAsset *> *)assets {
     [picker dismissViewControllerAnimated:YES completion:nil];
     
-    __block NSMutableArray *array = [NSMutableArray array];
     __block NSInteger fetchData = 0;
-    [BLPhotoDataCenter getThumbnailDataFromAssets:assets WithBlock:^(NSArray *thumbarray) {
+    float maxWidth = 800;
+    float maxHeight = 1280;
+    if ([self.options valueForKey:@"maxWidth"]) {
+        maxWidth = [[self.options valueForKey:@"maxWidth"] floatValue];
+    }
+    if ([self.options valueForKey:@"maxHeight"]) {
+        maxHeight = [[self.options valueForKey:@"maxHeight"] floatValue];
+    }
+    [BLPhotoDataCenter requestImagesForAssets:assets maxSize:CGSizeMake(maxWidth, maxHeight) completionBlock:^(NSArray<UIImage *> *images) {
         fetchData = 1;
         
-    } withRequestIDBlock:^(NSArray *requestArray) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+                       {
+                           [self _handleMultipleImagePickerResult:assets images:images];
+                       });
+    } requestIDsBlock:^(NSArray<NSNumber *> *requestArray) {
         _requestImageIdArray = requestArray;
     }];
     
@@ -385,7 +401,7 @@ RCT_EXPORT_METHOD(showImagePicker:(NSDictionary *)options callback:(RCTResponseS
     });
 }
 
-- (void)assetPickerControllerDidCancel:(BLPhotoAssetPickerController *)picker {
+- (void)photoAssetPickerControllerDidCancel:(BLPhotoAssetPickerController *)picker {
     self.callback(@[RCTMakeError(@"CANCELLED", nil, nil)]);
 }
 
@@ -417,6 +433,38 @@ RCT_EXPORT_METHOD(showImagePicker:(NSDictionary *)options callback:(RCTResponseS
     [BLPhotoUtils setWillUseCount:0];
     
     self.callback(@[RCTMakeError(@"CANCELLED", nil, nil)]);
+}
+
+- (void)_handleMultipleImagePickerResult:(NSArray <PHAsset *> *)assets images:(NSArray<UIImage *> *)images {
+    NSMutableDictionary *resultImageInfos = [NSMutableDictionary dictionaryWithCapacity:images.count];
+    for (int i = 0; i < assets.count; i++) {
+        PHAsset *asset = assets[i];
+        UIImage *image = images[i];
+        
+        NSString *cachePath = [self _defaultCachePathForAsset:asset];
+        NSError *error = nil;
+        cachePath = [self _resetCachePathIfNeeded:cachePath error:&error];
+        if (error) {
+            self.callback(@[RCTMakeError(@"CREATE_CACHE_DIR_FAILED", nil, nil)]);
+            break;
+        }
+        
+        [self _responseForImage:image needDownscale:NO imageURL:nil cachePath:cachePath completionBlock:^(NSError *error, NSDictionary *response) {
+            if (error) {
+                self.callback(@[RCTMakeError(@"ACCESS_IMAGE_FAILED", nil, nil)]);
+            } else {
+                resultImageInfos[@(i)] = response;
+                
+                if (resultImageInfos.count == assets.count) {
+                    NSMutableArray *results = [NSMutableArray arrayWithCapacity:assets.count];
+                    for (int j = 0; j < assets.count; j++) {
+                        [results addObject:resultImageInfos[@(j)]];
+                    }
+                    self.callback(@[[NSNull null], [results copy]]);
+                }
+            }
+        }];
+    }
 }
 
 @end

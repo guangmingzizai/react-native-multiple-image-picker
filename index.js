@@ -5,7 +5,7 @@
 * @Email:  guangmingzizai@qq.com
 * @Project: NumOneMatchmaker
 * @Last modified by:   wangjianfei
-* @Last modified time: 2016-11-09T11:20:04+08:00
+* @Last modified time: 2016-11-09T15:31:14+08:00
 *
 * @flow
 */
@@ -47,7 +47,7 @@ export type MultipleImagePikcerResultItem = {
   data?: string; //base64 encoded string
   isVertical: boolean; //whether image.height > image.width
   uri: string; //temp cached file path
-  origURL: string; //image original url
+  origURL?: string; //image original url
   fileSize?: number; //image data size
 };
 
@@ -59,7 +59,9 @@ const DEFAULT_OPTIONS: MultipleImagePickerOptions = {
   takePhotoButtonTitle: '拍照',
   chooseFromLibraryButtonTitle: '从手机相册选择',
   quality: 1.0,
-  allowsEditing: false
+  allowsEditing: false,
+  maxWidth: 800,
+  maxHeight: 1280,
 };
 
 module.exports = {
